@@ -1,0 +1,35 @@
+HOME=/home/jing/git_repo
+MUDUO_DIRECTORY ?= $(HOME)/build/release-install
+#MUDUO_DIRECTORY ?= $(HOME)/build/install
+MUDUO_INCLUDE = $(MUDUO_DIRECTORY)/include
+MUDUO_LIBRARY = $(MUDUO_DIRECTORY)/lib
+#SRC = ../src
+SRC = ./
+
+CXXFLAGS = -g -O0 -Wall -Wextra -Werror \
+	   -Wconversion -Wno-unused-parameter \
+	   -Wold-style-cast -Woverloaded-virtual \
+	   -Wpointer-arith -Wshadow -Wwrite-strings \
+	   -march=native -rdynamic \
+	   -I$(MUDUO_INCLUDE)
+
+LDFLAGS = -L$(MUDUO_LIBRARY) -lmuduo_net -lmuduo_base -lpthread -lrt
+
+PRG=client
+OBJ=client.o  
+
+
+all: $(PRG) 
+clean:
+	rm -f client chat *.o
+
+$(PRG) : $(OBJ)
+	g++ -o $@ $^ $(LDFLAGS)
+
+$(OBJ) : %.o : %.cc    
+	g++ $(CXXFLAGS) -o $@ -c $<
+    
+chat : mytalk_client.cpp
+	g++ $^ -o $@
+
+.PHONY: all clean
